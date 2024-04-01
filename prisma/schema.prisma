@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Card {
+  code         String   @id
+  name         String
+  cardType     String
+  cost         Int?
+  type         String[]
+  power        Int?
+  attribute    String[]
+  counterPower Int?
+  colors       String[]
+  effect       String
+  trigger      String?
+}
