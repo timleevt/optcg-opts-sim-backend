@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const getDecks = async () => {
   return await prisma.deck.findMany({
     select: {
+      id: true,
       name: true,
       leader: true,
       author: true,
