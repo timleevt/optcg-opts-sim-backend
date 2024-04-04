@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import postCard from "../db/postCard";
+import postCard from "../../db/postCard";
 import { z } from "zod";
 
 const postCardSchema = z.object({

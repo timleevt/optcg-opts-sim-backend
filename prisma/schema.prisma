@@ -20,3 +20,14 @@ model Card {
   effect       String
   trigger      String?
 }
+
+model Deck {
+  id        Int      @id @default(autoincrement())
+  name      String
+  leader    String
+  author    String
+  decklist  String[]
+  tech      String[]
+  pin       String
+  isPrivate Boolean
+}
