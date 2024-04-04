@@ -29,9 +29,8 @@ app.get("/alive", (_, res) => {
 app.post("/admin/card", handlePostCard);
 
 /*** General ***/
+// Deck
 app.get("/deck", handleGetDeckByCardList);
-
-/*** Deck ***/
 app.get("/decks", handleGetDecks);
 app.post("/deck", handlePostDeck);
 

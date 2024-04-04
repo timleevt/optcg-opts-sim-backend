@@ -6,22 +6,27 @@
 
 type DeckList = { [key: string]: number };
 const parseDeckList = (deckList: string | string[]) => {
-//   const deck: DeckList = {};
-const deck = new Map<string, number>();
-  if(typeof deckList === "string") {
-    // For Sim/Egman Events Lists
-    let res = deckList.split(/(\d)x/).filter(Boolean);
-    for (let i = 0; i < res.length - 1; i += 2) {
-      deck.set(res[i + 1], parseInt(res[i]))
-    }
-  } else { 
+  //   const deck: DeckList = {};
+  // const deck = new Map<string, number>();
+  // const cardList = new Set();
+  const deckObj: DeckList = {};
+  if (typeof deckList === "string") {
+    // For Sim/Egman Events Lists NEED TO FIX
+    // let res = deckList.split(/(\d)x/).filter(Boolean);
+    // for (let i = 0; i < res.length - 1; i += 2) {
+    //   deck.set(res[i + 1], parseInt(res[i]))
+    // }
+    return {};
+  } else {
     // For website OP top decks/cardgame.dev lists
-    for (let i = 1; i < deckList.length; i ++) {
-        deck.set(deckList[i], (deck.get(deckList[i]) ?? 0) + 1)
+    for (let i = 1; i < deckList.length; i++) {
+      // deck.set(deckList[i], (deck.get(deckList[i]) ?? 0) + 1);
+      // cardList.add(deckList[i]);
+      deckObj[deckList[i]] = (deckObj[deckList[i]] ?? 0) + 1;
     }
+    return deckObj;
   }
-  console.log(deck);
-  return deck;
+  // return deck;
 };
 
 export default parseDeckList;
