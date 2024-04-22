@@ -1,10 +1,10 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import handlePostCard from "./handler/admin/handlePostCard";
-import handleGetDeckByCardList from "./handler/deck/handleGetDeckByCardList";
-import handlePostDeck from "./handler/deck/handlePostDeck";
-import handleGetDecks from "./handler/deck/handleGetDecks";
+// import handlePostCard from "./handler/admin/handlePostCard";
+// import handleGetDeckByCardList from "./handler/deck/handleGetDeckByCardList";
+// import handlePostDeck from "./handler/deck/handlePostDeck";
+// import handleGetDecks from "./handler/deck/handleGetDecks";
 
 const bodyParser = require("body-parser");
 const app = express();
@@ -17,22 +17,14 @@ app.use(
   })
 );
 
-const port = 5000;
+const PORT = 5000 || process.env.PORT;
 
-// ping(test)
-app.get("/alive", (_, res) => {
-  res.status(200).send("alive!");
-});
+app.use("/", require("./routes/main"));
 
 /*** Admin ***/
 // Card
-app.post("/admin/card", handlePostCard);
+// app.post("/admin/card", handlePostCard);
 
-/*** General ***/
-// Deck
-app.get("/deck", handleGetDeckByCardList);
-app.get("/decks", handleGetDecks);
-app.post("/deck", handlePostDeck);
+app.use("/deck", require("./routes/deck"));
 
-
-app.listen(port, () => console.log(`Running on port ${port}`));
+app.listen(PORT, () => console.log(`Running on port ${PORT}`));
