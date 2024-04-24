@@ -4,10 +4,15 @@ import parseDeckList from "../util/parseDeckList";
 import getDeckByCardList from "../db/getDeckByCardList";
 import getDeckInfoById from "../db/getDeckInfoById";
 import getDecklistById from "../db/getDecklistById";
+import getDecks from "../db/getDecks";
 
 const deckListSchema = z.object({
   deckStr: z.string(),
 });
+
+const get_list_of_decks = async (_: Request, res: Response) => {
+  return res.send(await getDecks());
+};
 
 const submit_decklist = async (req: Request, res: Response) => {
   // // get deck from request body
@@ -61,6 +66,7 @@ const get_deck_list_by_id = async (req: Request, res: Response) => {
 };
 
 module.exports = {
+  get_list_of_decks,
   submit_decklist,
   get_deck_info_by_id,
   get_deck_list_by_id,

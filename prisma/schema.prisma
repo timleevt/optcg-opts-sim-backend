@@ -30,4 +30,16 @@ model Deck {
   tech      String[]
   pin       String
   isPrivate Boolean
+  combos    Combo[]
+}
+
+model Combo {
+  id         String  @id @default(uuid())
+  deck       Deck    @relation(references: [id], fields: [deckId])
+  deckId     Int
+  currBoard  String?
+  comboBoard String
+  startCurve Int
+  endCurve   Int
+  notes      String?
 }
