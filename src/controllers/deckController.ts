@@ -1,14 +1,12 @@
 import { Request, Response } from "express";
-import { z } from "zod";
 import parseDeckList from "../util/parseDeckList";
 import getDeckByCardList from "../db/getDeckByCardList";
 import getDeckInfoById from "../db/getDeckInfoById";
 import getDecklistById from "../db/getDecklistById";
 import getDecks from "../db/getDecks";
-
-const deckListSchema = z.object({
-  deckStr: z.string(),
-});
+import { comboSchema, deckListSchema } from "../schemas/deckSchema";
+import postCombo from "../db/postCombo";
+import getComboById from "../db/getComboById";
 
 const get_list_of_decks = async (_: Request, res: Response) => {
   return res.send(await getDecks());
@@ -31,6 +29,12 @@ const submit_decklist = async (req: Request, res: Response) => {
   });
 
   return res.send(test);
+};
+
+const submit_combo = async (req: Request, res: Response) => {
+  const comboData = comboSchema.parse(req.body);
+  console.log(comboData);
+  return res.send(await postCombo(comboData));
 };
 
 const get_deck_info_by_id = async (req: Request, res: Response) => {
@@ -65,9 +69,16 @@ const get_deck_list_by_id = async (req: Request, res: Response) => {
   return res.send(200);
 };
 
+const get_combos_by_deck_id = async (req: Request, res: Response) => {
+  const deckId = parseInt(req.params.deckid);
+  return res.send(await getComboById(deckId));
+};
+
 module.exports = {
   get_list_of_decks,
   submit_decklist,
+  submit_combo,
   get_deck_info_by_id,
   get_deck_list_by_id,
+  get_combos_by_deck_id,
 };
