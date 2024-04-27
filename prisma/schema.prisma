@@ -19,6 +19,7 @@ model Card {
   colors       String[]
   effect       String
   trigger      String?
+  keywords     String[]
 }
 
 model Deck {
@@ -43,3 +44,4 @@ model Combo {
   endCurve   Int
   notes      String?
 }
+

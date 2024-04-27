@@ -15,6 +15,7 @@ const post_card = async (req: Request, res: Response) => {
         colors,
         effect,
         trigger,
+        keywords
       } = postCardSchema.parse(req.body);
       try {
         await postCard({
@@ -29,6 +30,7 @@ const post_card = async (req: Request, res: Response) => {
           colors,
           effect,
           trigger,
+          keywords
         });
         res.sendStatus(200);
       } catch (e) {

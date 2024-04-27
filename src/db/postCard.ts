@@ -13,6 +13,7 @@ type params = {
   colors: string[];
   effect: string;
   trigger: string | null;
+  keywords: string[];
 };
 
 const postCard = async ({
@@ -26,7 +27,8 @@ const postCard = async ({
   counterPower,
   colors,
   effect,
-  trigger
+  trigger,
+  keywords,
 }: params) => {
   await prisma.card.create({
     data: {
@@ -40,7 +42,8 @@ const postCard = async ({
       counterPower,
       colors,
       effect,
-      trigger
+      trigger,
+      keywords,
     },
   });
 };

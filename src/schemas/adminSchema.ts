@@ -12,4 +12,5 @@ export const postCardSchema = z.object({
   colors: z.array(z.string()),
   effect: z.string(),
   trigger: z.string().nullable(),
+  keywords: z.array(z.string()),
 });
