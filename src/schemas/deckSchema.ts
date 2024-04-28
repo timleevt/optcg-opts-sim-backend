@@ -30,3 +30,16 @@ const cardObject = z.object({
 export const deckDataSchema = z.object({
   deck: z.array(cardObject)
 });
+
+const matchObject = z.object({
+  deckId: z.number(),
+  leader: z.string(),
+  event: z.string(),
+  turn: z.number().gt(0).lt(3),
+  dice: z.string(),
+  result: z.string()
+})
+
+export const matchSchema = z.object({
+  match: matchObject
+})

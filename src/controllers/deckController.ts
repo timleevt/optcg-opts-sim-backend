@@ -8,10 +8,13 @@ import {
   comboSchema,
   deckDataSchema,
   deckListSchema,
+  matchSchema,
 } from "../schemas/deckSchema";
 import postCombo from "../db/postCombo";
 import getComboById from "../db/getComboById";
 import getLeaders from "../db/getLeaders";
+import getMatchesById from "../db/getMatchesById";
+import postMatchResult from "../db/postMatchResult";
 
 const get_list_of_decks = async (_: Request, res: Response) => {
   return res.send(await getDecks());
@@ -79,7 +82,7 @@ const get_combos_by_deck_id = async (req: Request, res: Response) => {
 };
 
 const get_deck_data = async (req: Request, res: Response) => {
-  const {deck} = deckDataSchema.parse(req.body);
+  const { deck } = deckDataSchema.parse(req.body);
   const counter = {
     c1k: 0,
     c2k: 0,
@@ -87,12 +90,13 @@ const get_deck_data = async (req: Request, res: Response) => {
   };
 
   // Need to add to db
-  // const keyword = {
-  //   trigger: 0,
-  //   banish: 0,
-  //   rush: 0,
-  //   blocker: 0,
-  // };
+  const keyword = {
+    trigger: 0,
+    banish: 0,
+    rush: 0,
+    blocker: 0,
+    double_attack: 0,
+  };
   const cardType = {
     character: 0,
     event: 0,
@@ -150,7 +154,22 @@ const get_deck_data = async (req: Request, res: Response) => {
 
 const get_leaders = async (_: Request, res: Response) => {
   return res.send(await getLeaders());
-}
+};
+
+const get_matches_by_id = async (req: Request, res: Response) => {
+  console.log(`Calling GET /decks/matches/${req.params.id}`)
+  if (typeof req.params.id === "string") {
+    const deckId = parseInt(req.params.id);
+    return res.send(await getMatchesById(deckId));
+  }
+  return res.send(400);
+};
+
+const submit_match = async (req: Request, res: Response) => {
+  console.log("Calling POST /decks/match");
+  const { match } = matchSchema.parse(req.body);
+  return res.send(await postMatchResult(match));
+};
 
 module.exports = {
   get_list_of_decks,
@@ -161,4 +180,6 @@ module.exports = {
   get_combos_by_deck_id,
   get_deck_data,
   get_leaders,
+  get_matches_by_id,
+  submit_match,
 };

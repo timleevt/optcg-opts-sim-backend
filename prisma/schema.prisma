@@ -32,6 +32,7 @@ model Deck {
   pin       String
   isPrivate Boolean
   combos    Combo[]
+  matches   Match[]
 }
 
 model Combo {
@@ -45,3 +46,13 @@ model Combo {
   notes      String?
 }
 
+model Match {
+  id         String @id @default(uuid())
+  deck       Deck   @relation(references: [id], fields: [deckId])
+  deckId     Int
+  eventName  String
+  leader     String
+  diceResult String
+  result     String
+  turnOrder  Int
+}
