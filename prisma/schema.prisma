@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id       String @id @default(uuid())
+  user     String @unique @db.VarChar(45)
+  password String @db.VarChar(120)
+  decks    Deck[]
+}
+
 model Card {
   code         String   @id
   name         String
@@ -33,6 +40,8 @@ model Deck {
   isPrivate Boolean
   combos    Combo[]
   matches   Match[]
+  account   Account  @relation(fields: [accountId], references: [id])
+  accountId String
 }
 
 model Combo {
