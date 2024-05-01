@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 export const deckListSchema = z.object({
+  author: z.string(),
+  deckname: z.string(),
   deckStr: z.string(),
 });
 

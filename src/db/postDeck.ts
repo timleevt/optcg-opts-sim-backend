@@ -9,6 +9,7 @@ type params = {
   tech: string[];
   pin: string;
   isPrivate: boolean;
+  accountId: string;
 };
 
 const postDeck = async ({
@@ -19,6 +20,7 @@ const postDeck = async ({
   tech,
   pin,
   isPrivate,
+  accountId
 }: params) => {
   await prisma.deck.create({
     data: {
@@ -29,6 +31,7 @@ const postDeck = async ({
       tech,
       pin,
       isPrivate,
+      accountId
     },
   });
 };

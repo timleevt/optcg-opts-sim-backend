@@ -10,13 +10,13 @@ const parseDeckList = (deckList: string | string[]) => {
   const deckListObj: DeckList = {};
 
   // ARRAY TYPE - (for ones already stored in DB)
-  if(Array.isArray(deckList)) {
+  if (Array.isArray(deckList)) {
     for (let i = 1; i < deckList.length; i++) {
       deckListObj[deckList[i]] = (deckListObj[deckList[i]] ?? 0) + 1;
     }
   }
   // BRACKET TYPE
-  else if (typeof deckList === 'string' && deckList.includes("[")) {
+  else if (typeof deckList === "string" && deckList.includes("[")) {
     // Remove all brackets and quotation marks
     const deckListStr = deckList.replace(/[\[\]\"']/g, "");
     const deckListArr = deckListStr.split(",");
@@ -26,14 +26,13 @@ const parseDeckList = (deckList: string | string[]) => {
     }
   } else {
     // TEXT TYPE: TODO
-    // if (typeof deckList === "string") {
-    // For Sim/Egman Events Lists NEED TO FIX
-    // let res = deckList.split(/(\d)x/).filter(Boolean);
-    // for (let i = 0; i < res.length - 1; i += 2) {
-    //   deck.set(res[i + 1], parseInt(res[i]))
-    // }
-    //   return {};
-    // }
+    if (typeof deckList === "string") {
+      // For Sim/Egman Events Lists NEED TO FIX
+      let deckSplitRegex = deckList.split(/(\d)x|\n/).filter(Boolean);
+      for (let i = 0; i < deckSplitRegex.length - 2; i += 2) {
+        deckListObj[deckSplitRegex[i + 1]] = parseInt(deckSplitRegex[i]);
+      }
+    }
   }
 
   return deckListObj;

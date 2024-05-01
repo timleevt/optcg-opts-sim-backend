@@ -15,14 +15,21 @@ import getComboById from "../db/getComboById";
 import getLeaders from "../db/getLeaders";
 import getMatchesById from "../db/getMatchesById";
 import postMatchResult from "../db/postMatchResult";
+import postDeck from "../db/postDeck";
+import extractDeckInfo from "../util/extractDeckInfo";
+import getUser from "../db/getUser";
 
 const get_list_of_decks = async (_: Request, res: Response) => {
   return res.send(await getDecks());
 };
 
+/* @POST /deck/submit-decklist
+ *
+ */
 const submit_decklist = async (req: Request, res: Response) => {
   // // get deck from request body
-  const { deckStr } = deckListSchema.parse(req.body);
+  const { author, deckname, deckStr } = deckListSchema.parse(req.body);
+
   // // convert the deck into an object where key is code and value is # copies
   const parsedDeckListObj = parseDeckList(deckStr);
 
@@ -36,6 +43,27 @@ const submit_decklist = async (req: Request, res: Response) => {
     test.push({ ...e, copies: parsedDeckListObj[e.code] });
   });
 
+  const { leaderCard, deckCodes } = extractDeckInfo(test);
+
+  try {
+    const u = await getUser(author);
+    if(!u) {
+      throw Error;
+    }
+
+    await postDeck({
+      name: deckname,
+      leader: leaderCard,
+      author: author,
+      decklist: deckCodes,
+      tech: [""],
+      pin: "1234",
+      isPrivate: false,
+      accountId: u?.id,
+    });
+  } catch (error) {
+    res.send(400);
+  }
   return res.send(test);
 };
 
@@ -157,7 +185,7 @@ const get_leaders = async (_: Request, res: Response) => {
 };
 
 const get_matches_by_id = async (req: Request, res: Response) => {
-  console.log(`Calling GET /decks/matches/${req.params.id}`)
+  console.log(`Calling GET /decks/matches/${req.params.id}`);
   if (typeof req.params.id === "string") {
     const deckId = parseInt(req.params.id);
     return res.send(await getMatchesById(deckId));

@@ -65,11 +65,17 @@ const login_user = async (req: Request, res: Response) => {
       tokenData,
       process.env.TOKEN_SECRET!,
       {
-        expiresIn: "3d",
+        expiresIn: "7d",
       },
       (err, token) => {
         if (err) throw err;
-        res.cookie("token", token).json(user);
+        res
+          .cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+          })
+          .json(user);
       }
     );
   } catch (error) {
@@ -82,15 +88,36 @@ const login_user = async (req: Request, res: Response) => {
   }
 };
 
+const logout_user = (_: Request, res: Response) => {
+  res.cookie("token", "", {
+    expires: new Date(0),
+    httpOnly: true,
+  });
+  res
+    .status(200)
+    .json({ success: true, message: "User logged out successfully" });
+};
+
 const get_profile = (req: Request, res: Response) => {
   const { token } = req.cookies;
+
+  if(token === undefined) {
+    return res.status(200);
+  }
+
   if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET!, {}, (err, user) => {
-      if (err) throw err;
-      res.json(user);
-    });
+    try {
+      jwt.verify(token, process.env.TOKEN_SECRET!, {}, (err, user) => {
+        if (err) throw err;
+        res.json(user);
+      });
+    } catch (error) {
+      res.status(401);
+      throw new Error("Not authorized, invalid token");
+    }
   } else {
-    res.json(null);
+    res.status(401);
+    throw new Error("Not authorized, no token");
   }
 };
 
@@ -98,5 +125,6 @@ module.exports = {
   retrieve_user,
   register_user,
   login_user,
+  logout_user,
   get_profile,
 };
