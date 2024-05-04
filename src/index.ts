@@ -15,11 +15,12 @@ app.use(
     origin:
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : "https://optcg-opts-sim.com",
+        : "https://optcg-opts-sim.vercel.app",
     credentials: true,
   })
 );
 app.use(cookieParser());
+app.set("trust proxy", 1);
 
 const PORT = 5000 || process.env.BACKEND_PORT;
 
