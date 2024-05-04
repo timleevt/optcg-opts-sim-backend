@@ -16,63 +16,98 @@ import getLeaders from "../db/getLeaders";
 import getMatchesById from "../db/getMatchesById";
 import postMatchResult from "../db/postMatchResult";
 import postDeck from "../db/postDeck";
-import extractDeckInfo from "../util/extractDeckInfo";
 import getUser from "../db/getUser";
 
+/* @GET /deck/list
+ *  Return a list of all user submitted decks
+ */
 const get_list_of_decks = async (_: Request, res: Response) => {
   return res.send(await getDecks());
 };
 
 /* @POST /deck/submit-decklist
- *
+ * Input: User info and deck string (from sim/site)
+ * Output: Adds deck into the Deck table
+ * Currently returns all the cards with card information attached
+ * need to redo this function
  */
 const submit_decklist = async (req: Request, res: Response) => {
-  // // get deck from request body
+  console.log("Calling POST /deck/submit-decklist");
+  // get deck from request body
   const { author, deckname, deckStr } = deckListSchema.parse(req.body);
 
-  // // convert the deck into an object where key is code and value is # copies
-  const parsedDeckListObj = parseDeckList(deckStr);
+  let deckListArr: string[] = [];
+  // BRACKET TYPE
+  if (deckStr.includes("[")) {
+    // Remove all brackets and quotation marks
+    const deckListStr = deckStr.replace(/[\[\]\"']/g, "");
+    deckListArr = deckListStr.split(",").slice(1);
+  } else {
+    // TEXT TYPE: (For Sim/Egman Events Lists)
+    let deckSplitRegex = deckStr.split(/(\d)x|\n/).filter(Boolean);
+    for (let i = 0; i < deckSplitRegex.length; i += 2) {
+      for (let j = 0; j < parseInt(deckSplitRegex[i]); j++) {
+        deckListArr.push(deckSplitRegex[i + 1]);
+      }
+    }
+  }
 
-  // // retrieve card information from db using the code
-  const deckList = await getDeckByCardList(parsedDeckListObj);
-
-  // // TODO: fix typing
-  let test: any[] = [];
-
-  deckList.forEach((e) => {
-    test.push({ ...e, copies: parsedDeckListObj[e.code] });
-  });
-
-  const { leaderCard, deckCodes } = extractDeckInfo(test);
+  if (deckListArr.length != 51) {
+    return res.status(400).json({ error: "Deck must be 51 cards" });
+  }
 
   try {
-    const u = await getUser(author);
-    if(!u) {
-      throw Error;
+    // Find the leader card
+    let deckLeader = [];
+    const leaders = (await getLeaders()).map((i) => i.code);
+    for (let i of deckListArr) {
+      if (leaders.includes(i)) {
+        deckLeader.push(i);
+      }
     }
+
+    if (deckLeader.length != 1) {
+      return res
+        .status(400)
+        .json({ error: "Deck may only have 1 Leader card." });
+    }
+    const user = await getUser(author);
+    if (!user) return res.status(400).json({ error: "User not found." });
 
     await postDeck({
       name: deckname,
-      leader: leaderCard,
+      leader: deckLeader[0],
       author: author,
-      decklist: deckCodes,
+      decklist: deckListArr,
       tech: [""],
       pin: "1234",
       isPrivate: false,
-      accountId: u?.id,
+      accountId: user.id,
     });
   } catch (error) {
-    res.send(400);
+    return res
+      .status(400)
+      .json({ error: "Something went wrong with the server." });
   }
-  return res.send(test);
+
+  return res.status(200).json({ message: "Deck successfully submitted" });
 };
 
+/* @POST /deck/combo
+ * Input: Combo information and deck information in body.
+ * Output: Combo added to Combo table
+ */
 const submit_combo = async (req: Request, res: Response) => {
   const comboData = comboSchema.parse(req.body);
   return res.send(await postCombo(comboData));
 };
 
-const get_deck_info_by_id = async (req: Request, res: Response) => {
+/* @GET /deck/deck-info
+ * Input: Deck ID
+ * Output: Get information from the Deck table.
+ * This endpoint might not be needed
+ */
+const get_deck_by_id = async (req: Request, res: Response) => {
   if (typeof req.query.id === "string") {
     const deckID = parseInt(req.query.id);
     try {
@@ -84,6 +119,10 @@ const get_deck_info_by_id = async (req: Request, res: Response) => {
   return res.send(400);
 };
 
+/* @GET /deck/:id
+ * Input: Deck ID
+ * Output: Get all card information for a given deck
+ */
 const get_deck_list_by_id = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   try {
@@ -104,11 +143,19 @@ const get_deck_list_by_id = async (req: Request, res: Response) => {
   return res.send(200);
 };
 
+/* @GET /deck/combolist/:deckid
+ * Input: Deck ID
+ * Output: Get all combos associated with a deck
+ */
 const get_combos_by_deck_id = async (req: Request, res: Response) => {
   const deckId = parseInt(req.params.deckid);
   return res.send(await getComboById(deckId));
 };
 
+/* @POST /deck/data
+ * Input: Array of cards with information attached
+ * Output: Object with calculated deck stats
+ */
 const get_deck_data = async (req: Request, res: Response) => {
   const { deck } = deckDataSchema.parse(req.body);
   const counter = {
@@ -117,14 +164,6 @@ const get_deck_data = async (req: Request, res: Response) => {
     event: 0, // figure out best way to do this
   };
 
-  // Need to add to db
-  const keyword = {
-    trigger: 0,
-    banish: 0,
-    rush: 0,
-    blocker: 0,
-    double_attack: 0,
-  };
   const cardType = {
     character: 0,
     event: 0,
@@ -135,8 +174,10 @@ const get_deck_data = async (req: Request, res: Response) => {
   const power = new Map();
   const attribute = new Map();
   const type = new Map();
+  const keyword = new Map();
 
   deck.forEach((i) => {
+    // TODO: Event counter
     // Counter Calculation
     switch (i.counterPower) {
       case 1000:
@@ -166,6 +207,21 @@ const get_deck_data = async (req: Request, res: Response) => {
       attribute.set(a, (attribute.get(a) || 0) + i.copies)
     );
     i.type.forEach((a) => type.set(a, (type.get(a) || 0) + i.copies));
+    // Keywords
+    i.keywords.forEach((a) => {
+      if (a === "") {
+        return;
+      }
+      if (a === "Double Attack") {
+        keyword.set("DoubleAttack", (type.get("DoubleAttack") || 0) + i.copies);
+      } else {
+        keyword.set(a, (keyword.get(a) || 0) + i.copies);
+      }
+    });
+    // Trigger keyword is stored in a separate column
+    if (i.trigger !== null && i.trigger !== "") {
+      keyword.set("Trigger", (keyword.get("Trigger") || 0) + i.copies);
+    }
   });
 
   const z = {
@@ -175,6 +231,7 @@ const get_deck_data = async (req: Request, res: Response) => {
     power: Object.fromEntries(power),
     attribute: Object.fromEntries(attribute),
     type: Object.fromEntries(type),
+    keywords: Object.fromEntries(keyword),
   };
 
   return res.send(z);
@@ -203,7 +260,7 @@ module.exports = {
   get_list_of_decks,
   submit_decklist,
   submit_combo,
-  get_deck_info_by_id,
+  get_deck_by_id,
   get_deck_list_by_id,
   get_combos_by_deck_id,
   get_deck_data,

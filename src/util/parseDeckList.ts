@@ -25,11 +25,11 @@ const parseDeckList = (deckList: string | string[]) => {
       deckListObj[deckListArr[i]] = (deckListObj[deckListArr[i]] ?? 0) + 1;
     }
   } else {
-    // TEXT TYPE: TODO
+    // TEXT TYPE:
     if (typeof deckList === "string") {
-      // For Sim/Egman Events Lists NEED TO FIX
+      // For Sim/Egman Events Lists
       let deckSplitRegex = deckList.split(/(\d)x|\n/).filter(Boolean);
-      for (let i = 0; i < deckSplitRegex.length - 2; i += 2) {
+      for (let i = 0; i < deckSplitRegex.length; i += 2) {
         deckListObj[deckSplitRegex[i + 1]] = parseInt(deckSplitRegex[i]);
       }
     }

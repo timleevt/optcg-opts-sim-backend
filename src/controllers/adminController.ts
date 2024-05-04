@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { postCardSchema } from "../schemas/adminSchema";
 import postCard from "../db/postCard";
 
-const post_card = async (req: Request, res: Response) => {
+// @ PUT /admin/card
+// Input: JSON Body with card information
+// Output: Status 200
+const create_card = async (req: Request, res: Response) => {
     const {
         code,
         name,
@@ -39,5 +42,5 @@ const post_card = async (req: Request, res: Response) => {
 }
 
 module.exports = {
-    post_card
+  create_card
 }

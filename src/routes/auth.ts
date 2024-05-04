@@ -3,14 +3,6 @@ import { Request, Response } from "express";
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const cors = require("cors");
-
-router.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-  })
-);
 
 router.post("/user", authController.retrieve_user);
 router.post("/register", authController.register_user);

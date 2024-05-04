@@ -4,6 +4,6 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 
-router.put("/card", adminController.post_card);
+router.put("/card", adminController.create_card);
 
 module.exports = router;

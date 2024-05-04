@@ -8,7 +8,7 @@ const deckController = require("../controllers/deckController");
 // app.post("/deck", handleGetDeckByCardList);
 
 router.get("/list", deckController.get_list_of_decks);
-router.get("/deck-info", deckController.get_deck_info_by_id);
+router.get("/deck-info", deckController.get_deck_by_id);
 router.get("/leaders", deckController.get_leaders);
 router.get("/matches/:id", deckController.get_matches_by_id);
 router.get("/:id", deckController.get_deck_list_by_id);

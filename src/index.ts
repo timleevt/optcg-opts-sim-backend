@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
@@ -12,7 +12,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "https://optcg-opts-sim.vercel.app",
+    origin:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "https://optcg-opts-sim.com",
     credentials: true,
   })
 );

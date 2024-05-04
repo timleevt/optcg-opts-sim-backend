@@ -27,6 +27,7 @@ const cardObject = z.object({
   colors: z.array(z.string()),
   effect: z.string(),
   trigger: z.string().nullable(),
+  keywords: z.array(z.string()),
   copies: z.number(),
 });
 export const deckDataSchema = z.object({

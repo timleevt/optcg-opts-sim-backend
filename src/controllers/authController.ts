@@ -5,6 +5,9 @@ import { registerSchema, retrieveUserSchema } from "../schemas/authSchema";
 import jwt from "jsonwebtoken";
 const { hashPassword, comparePassword } = require("../util/auth");
 
+// @POST /auth/user
+// Input: username matching user column in DB
+// Output: Information from User table
 const retrieve_user = async (req: Request, res: Response) => {
   try {
     const { username } = retrieveUserSchema.parse(req.body);
@@ -18,6 +21,9 @@ const retrieve_user = async (req: Request, res: Response) => {
   }
 };
 
+// @POST /auth/register
+// Input: username / password in JSON body
+// Output: User information returned
 const register_user = async (req: Request, res: Response) => {
   try {
     const { username, password } = registerSchema.parse(req.body);
@@ -42,6 +48,9 @@ const register_user = async (req: Request, res: Response) => {
   }
 };
 
+// @POST /auth/login
+// Input: username / password in JSON body
+// Output: User information and cookie with token
 const login_user = async (req: Request, res: Response) => {
   try {
     const { username, password } = registerSchema.parse(req.body);
@@ -88,16 +97,23 @@ const login_user = async (req: Request, res: Response) => {
   }
 };
 
+// @GET /auth/logout
+// Input: 
+// Output: Status 200. Token cookie erased from storage
 const logout_user = (_: Request, res: Response) => {
   res.cookie("token", "", {
     expires: new Date(0),
     httpOnly: true,
+    sameSite: "strict"
   });
   res
     .status(200)
     .json({ success: true, message: "User logged out successfully" });
 };
 
+// @GET /auth/profile
+// Input: token from cookie
+// Output: User information
 const get_profile = (req: Request, res: Response) => {
   const { token } = req.cookies;
 
