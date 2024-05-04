@@ -21,7 +21,7 @@ app.use(
 );
 app.use(cookieParser());
 
-const PORT = 5000 || process.env.PORT;
+const PORT = 5000 || process.env.BACKEND_PORT;
 
 // routes
 app.use("/", require("./routes/main"));
