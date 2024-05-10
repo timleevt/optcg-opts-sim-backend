@@ -212,11 +212,15 @@ const get_deck_data = async (req: Request, res: Response) => {
       if (a === "") {
         return;
       }
-      if (a === "Double Attack") {
+      else if (a === "EventCounter") {
+        counter.event += i.copies;
+      }
+      else if (a === "Double Attack") {
         keyword.set("DoubleAttack", (type.get("DoubleAttack") || 0) + i.copies);
       } else {
         keyword.set(a, (keyword.get(a) || 0) + i.copies);
       }
+
     });
     // Trigger keyword is stored in a separate column
     if (i.trigger !== null && i.trigger !== "") {

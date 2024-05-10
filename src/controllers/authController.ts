@@ -83,6 +83,8 @@ const login_user = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            domain: "optcg-opts-sim.com"
           })
           .json(user);
       }

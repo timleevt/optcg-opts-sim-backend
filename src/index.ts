@@ -12,10 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://optcg-opts-sim.vercel.app",
+    origin: "https://optcg-opts-sim.com",
     credentials: true,
   })
 );
@@ -25,9 +22,9 @@ app.set("trust proxy", 1);
 const PORT = 5000 || process.env.BACKEND_PORT;
 
 // routes
-app.use("/", require("./routes/main"));
-app.use("/auth", require("./routes/auth"));
-app.use("/admin", require("./routes/admin"));
-app.use("/deck", require("./routes/deck"));
+app.use("/api", require("./routes/main"));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/admin", require("./routes/admin"));
+app.use("/api/deck", require("./routes/deck"));
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));
