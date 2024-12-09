@@ -83,8 +83,8 @@ const login_user = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: "none",
-            domain: "optcg-opts-sim.com"
+            sameSite: true,
+            // domain: "optcg-opts-sim.com",
           })
           .json(user);
       }
@@ -100,13 +100,17 @@ const login_user = async (req: Request, res: Response) => {
 };
 
 // @GET /auth/logout
-// Input: 
+// Input:
 // Output: Status 200. Token cookie erased from storage
 const logout_user = (_: Request, res: Response) => {
   res.cookie("token", "", {
     expires: new Date(0),
     httpOnly: true,
-    sameSite: "strict"
+    sameSite: true,
+    domain:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "optcg-opts-sim.com",
   });
   res
     .status(200)
@@ -119,7 +123,7 @@ const logout_user = (_: Request, res: Response) => {
 const get_profile = (req: Request, res: Response) => {
   const { token } = req.cookies;
 
-  if(token === undefined) {
+  if (token === undefined) {
     return res.status(200);
   }
 

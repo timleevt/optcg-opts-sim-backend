@@ -35,6 +35,7 @@ export const deckDataSchema = z.object({
 });
 
 const matchObject = z.object({
+  userId: z.string(),
   deckId: z.number(),
   leader: z.string(),
   event: z.string(),

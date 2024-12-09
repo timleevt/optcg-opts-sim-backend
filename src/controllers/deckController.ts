@@ -13,10 +13,11 @@ import {
 import postCombo from "../db/postCombo";
 import getComboById from "../db/getComboById";
 import getLeaders from "../db/getLeaders";
-import getMatchesById from "../db/getMatchesById";
+import getMatchesByUserId from "../db/getMatchesByUserId";
 import postMatchResult from "../db/postMatchResult";
 import postDeck from "../db/postDeck";
 import getUser from "../db/getUser";
+import getDecksByAccountId from "../db/getDecksByUser";
 
 /* @GET /deck/list
  *  Return a list of all user submitted decks
@@ -211,16 +212,13 @@ const get_deck_data = async (req: Request, res: Response) => {
     i.keywords.forEach((a) => {
       if (a === "") {
         return;
-      }
-      else if (a === "EventCounter") {
+      } else if (a === "EventCounter") {
         counter.event += i.copies;
-      }
-      else if (a === "Double Attack") {
+      } else if (a === "Double Attack") {
         keyword.set("DoubleAttack", (type.get("DoubleAttack") || 0) + i.copies);
       } else {
         keyword.set(a, (keyword.get(a) || 0) + i.copies);
       }
-
     });
     // Trigger keyword is stored in a separate column
     if (i.trigger !== null && i.trigger !== "") {
@@ -246,18 +244,21 @@ const get_leaders = async (_: Request, res: Response) => {
 };
 
 const get_matches_by_id = async (req: Request, res: Response) => {
-  console.log(`Calling GET /decks/matches/${req.params.id}`);
-  if (typeof req.params.id === "string") {
-    const deckId = parseInt(req.params.id);
-    return res.send(await getMatchesById(deckId));
-  }
-  return res.send(400);
+  console.log(`Calling GET /deck/matches/:accountId`);
+  const accountId = req.params.accountId;
+  return res.send(await getMatchesByUserId(accountId));  
 };
 
 const submit_match = async (req: Request, res: Response) => {
-  console.log("Calling POST /decks/match");
+  console.log("Calling POST /deck/match");
   const { match } = matchSchema.parse(req.body);
   return res.send(await postMatchResult(match));
+};
+
+const get_decks_by_accountid = async (req: Request, res: Response) => {
+  console.log("Calling POST /deck/list/:accountId");
+  const accountId = req.params.accountId;
+  return res.send(await getDecksByAccountId(accountId));
 };
 
 module.exports = {
@@ -271,4 +272,5 @@ module.exports = {
   get_leaders,
   get_matches_by_id,
   submit_match,
+  get_decks_by_accountid,
 };

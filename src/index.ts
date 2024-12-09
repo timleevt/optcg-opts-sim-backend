@@ -12,7 +12,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "https://optcg-opts-sim.com",
+    origin:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "https://optcg-opts-sim.com",
     credentials: true,
   })
 );

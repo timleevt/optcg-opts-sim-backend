@@ -2,13 +2,13 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getMatchesById = async (deckId:number) => {
+const getMatchesByUserId = async (userId:string) => {
   return await prisma.match.findMany({
     where: {
-      deckId
+      userId
     },
   });
 };
 
 
-export default getMatchesById;
+export default getMatchesByUserId;

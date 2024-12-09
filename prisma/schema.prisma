@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Account {
-  id       String @id @default(uuid())
-  user     String @unique @db.VarChar(45)
-  password String @db.VarChar(120)
+  id       String  @id @default(uuid())
+  user     String  @unique @db.VarChar(45)
+  password String  @db.VarChar(120)
   decks    Deck[]
+  matches  Match[]
 }
 
 model Card {
@@ -56,9 +57,11 @@ model Combo {
 }
 
 model Match {
-  id         String @id @default(uuid())
-  deck       Deck   @relation(references: [id], fields: [deckId])
+  id         String  @id @default(uuid())
+  deck       Deck    @relation(references: [id], fields: [deckId])
   deckId     Int
+  user       Account @relation(references: [id], fields: [userId])
+  userId     String
   eventName  String
   leader     String
   diceResult String
