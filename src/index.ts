@@ -13,9 +13,9 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin:
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://optcg-opts-sim.com",
+      process.env.NODE_ENV === "production"
+        ? "https://optcg-opts-sim.com"
+        : "http://localhost:3000",
     credentials: true,
   })
 );
@@ -28,6 +28,6 @@ const PORT = 5000 || process.env.BACKEND_PORT;
 app.use("/api", require("./routes/main"));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/admin", require("./routes/admin"));
-app.use("/api/deck", require("./routes/deck"));
+app.use("/api/v1/deck", require("./routes/deck"));
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));

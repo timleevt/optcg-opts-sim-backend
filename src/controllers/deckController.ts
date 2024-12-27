@@ -18,6 +18,7 @@ import postMatchResult from "../db/postMatchResult";
 import postDeck from "../db/postDeck";
 import getUser from "../db/getUser";
 import getDecksByAccountId from "../db/getDecksByUser";
+import getRegisteredLeaders from "../db/getRegisteredLeaders";
 
 /* @GET /deck/list
  *  Return a list of all user submitted decks
@@ -261,6 +262,11 @@ const get_decks_by_accountid = async (req: Request, res: Response) => {
   return res.send(await getDecksByAccountId(accountId));
 };
 
+const get_registered_leaders = async (req: Request, res: Response) => {
+  console.log("Calling GET /api/v1/deck/registered-leaders");
+  return res.send(await getRegisteredLeaders());
+}
+
 module.exports = {
   get_list_of_decks,
   submit_decklist,
@@ -273,4 +279,5 @@ module.exports = {
   get_matches_by_id,
   submit_match,
   get_decks_by_accountid,
+  get_registered_leaders,
 };
