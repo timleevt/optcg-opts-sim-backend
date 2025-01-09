@@ -11,8 +11,6 @@ model Account {
   id       String  @id @default(uuid())
   user     String  @unique @db.VarChar(45)
   password String  @db.VarChar(120)
-  decks    Deck[]
-  matches  Match[]
 }
 
 model Card {
@@ -39,32 +37,28 @@ model Deck {
   tech      String[]
   pin       String
   isPrivate Boolean
-  combos    Combo[]
-  matches   Match[]
-  account   Account  @relation(fields: [accountId], references: [id])
-  accountId String
 }
 
-model Combo {
-  id         String  @id @default(uuid())
-  deck       Deck    @relation(references: [id], fields: [deckId])
-  deckId     Int
-  currBoard  String?
-  comboBoard String
-  startCurve Int
-  endCurve   Int
-  notes      String?
-}
+// model Combo {
+//   id         String  @id @default(uuid())
+//   deck       Deck    @relation(references: [id], fields: [deckId])
+//   deckId     Int
+//   currBoard  String?
+//   comboBoard String
+//   startCurve Int
+//   endCurve   Int
+//   notes      String?
+// }
 
-model Match {
-  id         String  @id @default(uuid())
-  deck       Deck    @relation(references: [id], fields: [deckId])
-  deckId     Int
-  user       Account @relation(references: [id], fields: [userId])
-  userId     String
-  eventName  String
-  leader     String
-  diceResult String
-  result     String
-  turnOrder  Int
-}
+// model Match {
+//   id         String  @id @default(uuid())
+//   deck       Deck    @relation(references: [id], fields: [deckId])
+//   deckId     Int
+//   user       Account @relation(references: [id], fields: [userId])
+//   userId     String
+//   eventName  String
+//   leader     String
+//   diceResult String
+//   result     String
+//   turnOrder  Int
+// }

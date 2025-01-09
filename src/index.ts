@@ -27,7 +27,7 @@ const PORT = 5000 || process.env.BACKEND_PORT;
 // routes
 app.use("/api", require("./routes/main"));
 app.use("/api/auth", require("./routes/auth"));
-app.use("/api/admin", require("./routes/admin"));
+app.use("/api/v1/admin", require("./routes/admin"));
 app.use("/api/v1/deck", require("./routes/deck"));
 
 app.listen(PORT, () => console.log(`Running on port ${PORT}`));

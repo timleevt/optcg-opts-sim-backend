@@ -7,7 +7,6 @@ const deckController = require("../controllers/deckController");
 // Deck
 // app.post("/deck", handleGetDeckByCardList);
 
-
 // TODO: all these routes are dead now due to changing the resource to v1. need to update
 // router.get("/list", deckController.get_list_of_decks);
 // router.get("/deck-info", deckController.get_deck_by_id);
@@ -15,7 +14,6 @@ const deckController = require("../controllers/deckController");
 // router.get("/:id", deckController.get_deck_list_by_id);
 // router.get("/matches/:accountId", deckController.get_matches_by_id);
 // router.get("/list/:accountId", deckController.get_decks_by_accountid);
-// router.post("/submit-decklist", deckController.submit_decklist);
 // router.post("/combo", deckController.submit_combo);
 // router.get("/combolist/:deckid", deckController.get_combos_by_deck_id);
 // router.post("/data", deckController.get_deck_data);
@@ -23,5 +21,10 @@ const deckController = require("../controllers/deckController");
 
 // Documented
 router.get("/registered-leaders", deckController.get_registered_leaders);
+router.get("/decks-leader", deckController.get_decks_by_leader);
+router.get("/cards-deckid", deckController.get_cards_by_deckId);
+router.post("/submit-decklist", deckController.submit_decklist);
+router.post("/data", deckController.get_deck_data);
+router.get("/:id", deckController.get_deck_list_by_id);
 
 module.exports = router;

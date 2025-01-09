@@ -10,7 +10,7 @@ import {
   deckListSchema,
   matchSchema,
 } from "../schemas/deckSchema";
-import postCombo from "../db/postCombo";
+// import postCombo from "../db/postCombo";
 import getComboById from "../db/getComboById";
 import getLeaders from "../db/getLeaders";
 import getMatchesByUserId from "../db/getMatchesByUserId";
@@ -19,6 +19,7 @@ import postDeck from "../db/postDeck";
 import getUser from "../db/getUser";
 import getDecksByAccountId from "../db/getDecksByUser";
 import getRegisteredLeaders from "../db/getRegisteredLeaders";
+import getDecksByLeader from "../db/getDecksByLeader";
 
 /* @GET /deck/list
  *  Return a list of all user submitted decks
@@ -34,7 +35,7 @@ const get_list_of_decks = async (_: Request, res: Response) => {
  * need to redo this function
  */
 const submit_decklist = async (req: Request, res: Response) => {
-  console.log("Calling POST /deck/submit-decklist");
+  console.log("Calling POST /api/v1/deck/submit-decklist");
   // get deck from request body
   const { author, deckname, deckStr } = deckListSchema.parse(req.body);
 
@@ -73,18 +74,13 @@ const submit_decklist = async (req: Request, res: Response) => {
         .status(400)
         .json({ error: "Deck may only have 1 Leader card." });
     }
-    const user = await getUser(author);
-    if (!user) return res.status(400).json({ error: "User not found." });
-
+    // const user = await getUser(author);
+    // if (!user) return res.status(400).json({ error: "User not found." });
     await postDeck({
       name: deckname,
       leader: deckLeader[0],
       author: author,
-      decklist: deckListArr,
-      tech: [""],
-      pin: "1234",
-      isPrivate: false,
-      accountId: user.id,
+      decklist: deckListArr
     });
   } catch (error) {
     return res
@@ -99,10 +95,10 @@ const submit_decklist = async (req: Request, res: Response) => {
  * Input: Combo information and deck information in body.
  * Output: Combo added to Combo table
  */
-const submit_combo = async (req: Request, res: Response) => {
-  const comboData = comboSchema.parse(req.body);
-  return res.send(await postCombo(comboData));
-};
+// const submit_combo = async (req: Request, res: Response) => {
+//   const comboData = comboSchema.parse(req.body);
+//   return res.send(await postCombo(comboData));
+// };
 
 /* @GET /deck/deck-info
  * Input: Deck ID
@@ -119,30 +115,6 @@ const get_deck_by_id = async (req: Request, res: Response) => {
     }
   }
   return res.send(400);
-};
-
-/* @GET /deck/:id
- * Input: Deck ID
- * Output: Get all card information for a given deck
- */
-const get_deck_list_by_id = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  try {
-    const deckList = await getDecklistById(id);
-    if (deckList) {
-      const parsedDeckList = parseDeckList(deckList.decklist);
-      const deckRes = await getDeckByCardList(parsedDeckList);
-      let deck: any[] = []; // fix later
-
-      deckRes.forEach((i) => {
-        deck.push({ ...i, copies: parsedDeckList[i.code] });
-      });
-      return res.send(deck);
-    }
-  } catch (e) {
-    return res.send(400);
-  }
-  return res.send(200);
 };
 
 /* @GET /deck/combolist/:deckid
@@ -247,7 +219,7 @@ const get_leaders = async (_: Request, res: Response) => {
 const get_matches_by_id = async (req: Request, res: Response) => {
   console.log(`Calling GET /deck/matches/:accountId`);
   const accountId = req.params.accountId;
-  return res.send(await getMatchesByUserId(accountId));  
+  return res.send(await getMatchesByUserId(accountId));
 };
 
 const submit_match = async (req: Request, res: Response) => {
@@ -262,15 +234,70 @@ const get_decks_by_accountid = async (req: Request, res: Response) => {
   return res.send(await getDecksByAccountId(accountId));
 };
 
+// Documented Functions Below
+
 const get_registered_leaders = async (req: Request, res: Response) => {
   console.log("Calling GET /api/v1/deck/registered-leaders");
   return res.send(await getRegisteredLeaders());
-}
+};
+
+/* Retrieve a list of registered decklists for a particular leader*/
+const get_decks_by_leader = async (req: Request, res: Response) => {
+  console.log("Calling GET /api/v1/deck/decks-leader");
+  const code = req.query.code as string;
+
+  if (!code) {
+    return res.status(400).json({ error: "Code query parameter is required" });
+  }
+  return res.send(await getDecksByLeader(code));
+};
+
+/* @GET /api/v1/deck/cards-deckid
+ * Input: DeckId (str?)
+ * Output: Array of Card Object
+ * Description: Given the deck id retrieve all the cards in that deck with card
+ * specific info attached.
+ */
+const get_cards_by_deckId = async (req: Request, res: Response) => {
+  console.log("Calling GET /api/v1/deck/cards-deckid");
+  const deckId = req.query.deckId as String;
+
+  if (!deckId) {
+    return res
+      .status(400)
+      .json({ error: "DeckId query parameter is required" });
+  }
+
+  return res.send(200);
+};
+
+/* @GET /deck/:id
+ * Input: Deck ID
+ * Output: Get all card information for a given deck
+ */
+const get_deck_list_by_id = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  try {
+    const deckList = await getDecklistById(id);
+    if (deckList) {
+      const parsedDeckList = parseDeckList(deckList.decklist);
+      const deckRes = await getDeckByCardList(parsedDeckList);
+      let deck: any[] = []; // fix later
+
+      deckRes.forEach((i) => {
+        deck.push({ ...i, copies: parsedDeckList[i.code] });
+      });
+      return res.send(deck);
+    }
+  } catch (e) {
+    return res.send(400);
+  }
+  return res.send(200);
+};
 
 module.exports = {
   get_list_of_decks,
   submit_decklist,
-  submit_combo,
   get_deck_by_id,
   get_deck_list_by_id,
   get_combos_by_deck_id,
@@ -280,4 +307,6 @@ module.exports = {
   submit_match,
   get_decks_by_accountid,
   get_registered_leaders,
+  get_decks_by_leader,
+  get_cards_by_deckId,
 };
