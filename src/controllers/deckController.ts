@@ -10,16 +10,16 @@ import {
   deckListSchema,
   matchSchema,
 } from "../schemas/deckSchema";
-// import postCombo from "../db/postCombo";
-import getComboById from "../db/getComboById";
+import postCombo from "../db/postCombo";
 import getLeaders from "../db/getLeaders";
 import getMatchesByUserId from "../db/getMatchesByUserId";
 import postMatchResult from "../db/postMatchResult";
 import postDeck from "../db/postDeck";
-import getUser from "../db/getUser";
+// import getUser from "../db/getUser";
 import getDecksByAccountId from "../db/getDecksByUser";
 import getRegisteredLeaders from "../db/getRegisteredLeaders";
 import getDecksByLeader from "../db/getDecksByLeader";
+import getCombosByLeader from "../db/getCombosByLeader";
 
 /* @GET /deck/list
  *  Return a list of all user submitted decks
@@ -80,7 +80,7 @@ const submit_decklist = async (req: Request, res: Response) => {
       name: deckname,
       leader: deckLeader[0],
       author: author,
-      decklist: deckListArr
+      decklist: deckListArr,
     });
   } catch (error) {
     return res
@@ -95,10 +95,10 @@ const submit_decklist = async (req: Request, res: Response) => {
  * Input: Combo information and deck information in body.
  * Output: Combo added to Combo table
  */
-// const submit_combo = async (req: Request, res: Response) => {
-//   const comboData = comboSchema.parse(req.body);
-//   return res.send(await postCombo(comboData));
-// };
+const submit_combo = async (req: Request, res: Response) => {
+  const comboData = comboSchema.parse(req.body);
+  return res.send(await postCombo(comboData));
+};
 
 /* @GET /deck/deck-info
  * Input: Deck ID
@@ -115,15 +115,6 @@ const get_deck_by_id = async (req: Request, res: Response) => {
     }
   }
   return res.send(400);
-};
-
-/* @GET /deck/combolist/:deckid
- * Input: Deck ID
- * Output: Get all combos associated with a deck
- */
-const get_combos_by_deck_id = async (req: Request, res: Response) => {
-  const deckId = parseInt(req.params.deckid);
-  return res.send(await getComboById(deckId));
 };
 
 /* @POST /deck/data
@@ -295,12 +286,33 @@ const get_deck_list_by_id = async (req: Request, res: Response) => {
   return res.send(200);
 };
 
+const get_combos_by_leader = async (req: Request, res: Response) => {
+  const leaderCode = req.params.leader;
+
+  // Check if the leader parameter is provided
+  if (!leaderCode) {
+    return res.status(400).json({ message: "Leader parameter is required" });
+  }
+
+  console.log(`Calling GET /api/v1/deck/combos/${leaderCode}`);
+
+  try {
+    const combos = await getCombosByLeader(leaderCode);
+
+    return res.status(200).json(combos);
+  } catch (e) {
+    console.error("Error while fetching combos:", e); // log the error for debugging
+    return res
+      .status(500)
+      .json({ message: "An error occurred while fetching combos" });
+  }
+};
+
 module.exports = {
   get_list_of_decks,
   submit_decklist,
   get_deck_by_id,
   get_deck_list_by_id,
-  get_combos_by_deck_id,
   get_deck_data,
   get_leaders,
   get_matches_by_id,
@@ -309,4 +321,6 @@ module.exports = {
   get_registered_leaders,
   get_decks_by_leader,
   get_cards_by_deckId,
+  submit_combo,
+  get_combos_by_leader,
 };

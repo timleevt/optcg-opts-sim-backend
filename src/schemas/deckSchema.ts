@@ -7,7 +7,7 @@ export const deckListSchema = z.object({
 });
 
 export const comboSchema = z.object({
-  deckId: z.number(),
+  leader: z.string(),
   currBoard: z.string(),
   comboBoard: z.string(),
   startCurve: z.number().gt(0).lt(11),

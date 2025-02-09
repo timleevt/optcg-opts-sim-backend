@@ -22,7 +22,7 @@ app.use(
 app.use(cookieParser());
 app.set("trust proxy", 1);
 
-const PORT = 5000 || process.env.BACKEND_PORT;
+const PORT = process.env.BACKEND_PORT || 5000;
 
 // routes
 app.use("/api", require("./routes/main"));
