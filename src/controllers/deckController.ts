@@ -311,9 +311,7 @@ const get_combos_by_leader = async (req: Request, res: Response) => {
 };
 
 const get_archived_decks = async (req: Request, res: Response) => {
-  const current_format = "OP10"; // TODO: prob take this as a param later but not sure how i want to do it yet
-  console.log(current_format);
-  console.log(`Calling GET /api/v1/deck/archive}`);
+  console.log(`Calling GET /api/v1/deck/archive`);
 
   try {
     const decks = await getArchivedDecks();

@@ -11,6 +11,7 @@ const getDecksByLeader = async (code: string) => {
     },
     where: {
       leader: code,
+      format: process.env.CURRENT_SET
     },
   });
 };
