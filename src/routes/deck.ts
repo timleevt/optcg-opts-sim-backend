@@ -24,6 +24,7 @@ router.get("/decks-leader", deckController.get_decks_by_leader);
 router.get("/cards-deckid", deckController.get_cards_by_deckId);
 router.post("/submit-decklist", deckController.submit_decklist);
 router.post("/data", deckController.get_deck_data);
+router.get("/archive", deckController.get_archived_decks);
 router.get("/:id", deckController.get_deck_list_by_id);
 router.get("/combos/:leader", deckController.get_combos_by_leader);
 router.post("/combo", deckController.submit_combo);

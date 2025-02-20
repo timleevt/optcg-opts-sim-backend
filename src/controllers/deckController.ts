@@ -20,6 +20,7 @@ import getDecksByAccountId from "../db/getDecksByUser";
 import getRegisteredLeaders from "../db/getRegisteredLeaders";
 import getDecksByLeader from "../db/getDecksByLeader";
 import getCombosByLeader from "../db/getCombosByLeader";
+import getArchivedDecks from "../db/getArchivedDecks";
 
 /* @GET /deck/list
  *  Return a list of all user submitted decks
@@ -37,7 +38,7 @@ const get_list_of_decks = async (_: Request, res: Response) => {
 const submit_decklist = async (req: Request, res: Response) => {
   console.log("Calling POST /api/v1/deck/submit-decklist");
   // get deck from request body
-  const { author, deckname, deckStr } = deckListSchema.parse(req.body);
+  const { author, deckname, deckStr, format } = deckListSchema.parse(req.body);
 
   let deckListArr: string[] = [];
   // BRACKET TYPE
@@ -81,6 +82,7 @@ const submit_decklist = async (req: Request, res: Response) => {
       leader: deckLeader[0],
       author: author,
       decklist: deckListArr,
+      format
     });
   } catch (error) {
     return res
@@ -301,10 +303,25 @@ const get_combos_by_leader = async (req: Request, res: Response) => {
 
     return res.status(200).json(combos);
   } catch (e) {
-    console.error("Error while fetching combos:", e); // log the error for debugging
+    console.error("Error while fetching combos:", e);
     return res
       .status(500)
       .json({ message: "An error occurred while fetching combos" });
+  }
+};
+
+const get_archived_decks = async (req: Request, res: Response) => {
+  const current_format = "OP10"; // TODO: prob take this as a param later but not sure how i want to do it yet
+  console.log(current_format);
+  console.log(`Calling GET /api/v1/deck/archive}`);
+
+  try {
+    const decks = await getArchivedDecks();
+    return res.status(200).json(decks);
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ message: "An error occurred while fetching archived decks" });
   }
 };
 
@@ -323,4 +340,5 @@ module.exports = {
   get_cards_by_deckId,
   submit_combo,
   get_combos_by_leader,
+  get_archived_decks,
 };

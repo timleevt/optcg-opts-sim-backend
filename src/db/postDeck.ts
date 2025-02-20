@@ -6,18 +6,18 @@ type params = {
   leader: string;
   author: string;
   decklist: string[];
+  format: string;
 };
 
-const postDeck = async ({ name, leader, author, decklist }: params) => {
+const postDeck = async ({ name, leader, author, decklist, format }: params) => {
   return await prisma.deck.create({
     data: {
       name,
       leader,
       author,
       decklist,
-      tech: [],
       pin: "1234",
-      isPrivate: false,
+      format // fix later
     },
   });
 };

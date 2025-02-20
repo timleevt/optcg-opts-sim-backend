@@ -9,7 +9,6 @@ const getDecks = async () => {
       name: true,
       leader: true,
       author: true,
-      isPrivate: false,
     },
     orderBy: {
       id: 'desc'

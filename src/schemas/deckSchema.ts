@@ -4,6 +4,7 @@ export const deckListSchema = z.object({
   author: z.string(),
   deckname: z.string(),
   deckStr: z.string(),
+  format: z.string()
 });
 
 export const comboSchema = z.object({
