@@ -6,6 +6,7 @@ const getDecksByLeader = async (code: string) => {
   return await prisma.deck.findMany({
     select: {
       id: true,
+      author: true,
       name: true,
       decklist: true,
     },

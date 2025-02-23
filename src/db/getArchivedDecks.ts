@@ -5,15 +5,17 @@ const prisma = new PrismaClient();
 const getArchivedDecks = async () => {
   return await prisma.deck.findMany({
     select: {
-        id: true,
-        leader: true,
-        name: true,
-        format: true,
+      id: true,
+      author: true,
+      leader: true,
+      name: true,
+      format: true,
+      leaderCode: true,
     },
     where: {
       format: {
-        not: process.env.CURRENT_SET
-      }
+        not: process.env.CURRENT_SET,
+      },
     },
   });
 };
